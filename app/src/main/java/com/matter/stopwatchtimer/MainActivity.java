@@ -3,7 +3,10 @@ package com.matter.stopwatchtimer;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView countdownTextView;
     private RoundProgressBar countdownProgressBar;
     private Button startButton;
+    private Button pauseButton;
+    private Button resetButton;
 
     private long startTimeInMillis;
 
@@ -31,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean timerRunning;
 
     private long timeLeftInMillis;
+    private int progress;
 
 
     @Override
@@ -45,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         countdownTextView = findViewById(R.id.countdownTextView);
         countdownProgressBar = findViewById(R.id.countdownProgressBar);
         startButton = findViewById(R.id.startButton);
+        pauseButton = findViewById(R.id.pauseButton);
+        resetButton = findViewById(R.id.resetButton);
 
         countdownProgressBar.setVisibility(View.INVISIBLE);
         countdownTextView.setVisibility(View.INVISIBLE);
@@ -62,18 +70,36 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (timerRunning) {
+                startTimer();
+                countdownProgressBar.setVisibility(View.VISIBLE);
+                countdownTextView.setVisibility(View.VISIBLE);
+                hoursPicker.setVisibility(View.INVISIBLE);
+                minutesPicker.setVisibility(View.INVISIBLE);
+                secondsPicker.setVisibility(View.INVISIBLE);
+                pauseButton.setVisibility(View.VISIBLE);
+                resetButton.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(timerRunning) {
                     pauseTimer();
                 } else {
-                    startTimer();
-                    countdownProgressBar.setVisibility(View.VISIBLE);
-                    countdownTextView.setVisibility(View.VISIBLE);
-                    hoursPicker.setVisibility(View.INVISIBLE);
-                    minutesPicker.setVisibility(View.INVISIBLE);
-                    secondsPicker.setVisibility(View.INVISIBLE);
+                    resumeTimer();
                 }
             }
         });
+
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetTimer();
+            }
+        });
+
 
         TextView timerView = findViewById(R.id.TimerView);
         TextView stopwatchView = findViewById(R.id.StopwatchView);
@@ -85,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        timerView.setPaintFlags(timerView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
     }
 
     private void startTimer() {
@@ -92,9 +120,37 @@ public class MainActivity extends AppCompatActivity {
         int minutes = minutesPicker.getValue();
         int seconds = secondsPicker.getValue();
 
-        timeLeftInMillis = (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
+        timeLeftInMillis = ((long) hours * 60 * 60 + minutes * 60L + seconds) * 1000;
         startTimeInMillis = timeLeftInMillis;
 
+        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
+                progress = (int) (((float) timeLeftInMillis / (float) startTimeInMillis) * 100);
+                countdownProgressBar.setProgress(progress);
+                updateCountDown();
+            }
+
+            @Override
+            public void onFinish() {
+                timerRunning = false;
+                startButton.setText("Start");
+                resetTimer();
+            }
+        }.start();
+
+        timerRunning = true;
+        startButton.setVisibility(View.INVISIBLE);
+    }
+
+    private void pauseTimer() {
+        countDownTimer.cancel();
+        timerRunning = false;
+        pauseButton.setText("Resume");
+    }
+
+    private void resumeTimer() {
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -110,13 +166,24 @@ public class MainActivity extends AppCompatActivity {
         }.start();
 
         timerRunning = true;
-        startButton.setText("Pause");
+        pauseButton.setText("Pause");
     }
 
-    private void pauseTimer() {
-        countDownTimer.cancel();
+    private void resetTimer() {
         timerRunning = false;
+        countDownTimer.cancel();
+
+        countdownProgressBar.setVisibility(View.INVISIBLE);
+        countdownTextView.setVisibility(View.INVISIBLE);
+        hoursPicker.setVisibility(View.VISIBLE);
+        minutesPicker.setVisibility(View.VISIBLE);
+        secondsPicker.setVisibility(View.VISIBLE);
+
+        startButton.setVisibility(View.VISIBLE);
         startButton.setText("Start");
+
+        resetButton.setVisibility(View.INVISIBLE);
+        pauseButton.setVisibility(View.INVISIBLE);
     }
 
     private void updateCountDown() {
@@ -125,10 +192,6 @@ public class MainActivity extends AppCompatActivity {
         int seconds = (int) (timeLeftInMillis / 1000) % 60;
         String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
         countdownTextView.setText(timeLeftFormatted);
-
-        int progress = (int) (((float) timeLeftInMillis / (float) startTimeInMillis) * 100);
-        
-        countdownProgressBar.setProgress(progress);
     }
 
 
