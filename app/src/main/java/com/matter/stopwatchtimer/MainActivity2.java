@@ -2,6 +2,7 @@ package com.matter.stopwatchtimer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ public class MainActivity2 extends AppCompatActivity {
     private boolean mTimerRunning;
     private long mTimeElapsed;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +70,7 @@ public class MainActivity2 extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("SetTextI18n")
     private void startTimer() {
         mCountDownTimer = new CountDownTimer(Long.MAX_VALUE, 1000) {
             @Override
@@ -86,12 +89,14 @@ public class MainActivity2 extends AppCompatActivity {
         mStartPauseButton.setText("Pause");
     }
 
+    @SuppressLint("SetTextI18n")
     private void pauseTimer() {
         mCountDownTimer.cancel();
         mTimerRunning = false;
         mStartPauseButton.setText("Resume");
     }
 
+    @SuppressLint("SetTextI18n")
     private void resetTimer() {
         if(mTimerRunning || mTimeElapsed > 0) {
             mCountDownTimer.cancel();
@@ -102,6 +107,7 @@ public class MainActivity2 extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private void updateDisplay() {
         int minutes = (int) (mTimeElapsed / 1000) / 60;
         int seconds = (int) (mTimeElapsed / 1000) % 60;

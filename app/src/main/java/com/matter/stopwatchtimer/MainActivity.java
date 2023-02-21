@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 updateCountDown();
             }
 
+            @SuppressLint("SetTextI18n")
             @Override
             public void onFinish() {
                 timerRunning = false;
@@ -144,12 +145,14 @@ public class MainActivity extends AppCompatActivity {
         startButton.setVisibility(View.INVISIBLE);
     }
 
+    @SuppressLint("SetTextI18n")
     private void pauseTimer() {
         countDownTimer.cancel();
         timerRunning = false;
         pauseButton.setText("Resume");
     }
 
+    @SuppressLint("SetTextI18n")
     private void resumeTimer() {
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
@@ -169,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         pauseButton.setText("Pause");
     }
 
+    @SuppressLint("SetTextI18n")
     private void resetTimer() {
         timerRunning = false;
         countDownTimer.cancel();
