@@ -2,4 +2,10 @@
     <string name="app_name">Stopwatch Timer</string>
     <string name="timer">Timer</string>
     <string name="stopwatch">Stopwatch</string>
+    <string name="worldClock">World Clock</string>
+    <string name="start">Start</string>
+    <string name="reset">Reset</string>
+    <string name="pause">Pause</string>
+    <string name="currentTime">Placeholder</string>
+    <string name="timeZone">Placeholder</string>
 </resources>

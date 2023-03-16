@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.SpannableString;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
@@ -45,12 +47,36 @@ public class MainActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
         setContentView(R.layout.activity_main);
 
+        TextView timerView = findViewById(R.id.TimerView);
+        TextView stopwatchView = findViewById(R.id.StopwatchView);
+        TextView worldClockView = findViewById(R.id.worldClockView);
+
+        stopwatchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+                startActivity(intent);
+            }
+        });
+
+        worldClockView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, MainActivity3.class);
+                startActivity(intent);
+            }
+        });
+
+        timerView.setPaintFlags(timerView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG | Paint.FAKE_BOLD_TEXT_FLAG);
+
+
         hoursPicker = findViewById(R.id.hoursPicker);
         minutesPicker = findViewById(R.id.minutesPicker);
         secondsPicker = findViewById(R.id.secondsPicker);
         countdownTextView = findViewById(R.id.countdownTextView);
         countdownProgressBar = findViewById(R.id.countdownProgressBar);
         startButton = findViewById(R.id.startButton);
+
         pauseButton = findViewById(R.id.pauseButton);
         resetButton = findViewById(R.id.resetButton);
 
@@ -71,14 +97,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startTimer();
-                countdownProgressBar.setVisibility(View.VISIBLE);
-                countdownTextView.setVisibility(View.VISIBLE);
-                hoursPicker.setVisibility(View.INVISIBLE);
-                minutesPicker.setVisibility(View.INVISIBLE);
-                secondsPicker.setVisibility(View.INVISIBLE);
-                pauseButton.setVisibility(View.VISIBLE);
-                resetButton.setVisibility(View.VISIBLE);
-
             }
         });
 
@@ -99,20 +117,6 @@ public class MainActivity extends AppCompatActivity {
                 resetTimer();
             }
         });
-
-
-        TextView timerView = findViewById(R.id.TimerView);
-        TextView stopwatchView = findViewById(R.id.StopwatchView);
-
-        stopwatchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-                startActivity(intent);
-            }
-        });
-
-        timerView.setPaintFlags(timerView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
     }
 
     private void startTimer() {
@@ -122,6 +126,18 @@ public class MainActivity extends AppCompatActivity {
 
         timeLeftInMillis = ((long) hours * 60 * 60 + minutes * 60L + seconds) * 1000;
         startTimeInMillis = timeLeftInMillis;
+
+        if(timeLeftInMillis == 0) {
+            return;
+        }
+
+        countdownProgressBar.setVisibility(View.VISIBLE);
+        countdownTextView.setVisibility(View.VISIBLE);
+        hoursPicker.setVisibility(View.INVISIBLE);
+        minutesPicker.setVisibility(View.INVISIBLE);
+        secondsPicker.setVisibility(View.INVISIBLE);
+        pauseButton.setVisibility(View.VISIBLE);
+        resetButton.setVisibility(View.VISIBLE);
 
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
