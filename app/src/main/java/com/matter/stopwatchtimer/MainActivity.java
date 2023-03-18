@@ -2,19 +2,11 @@ package com.matter.stopwatchtimer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.text.SpannableString;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -27,19 +19,18 @@ public class MainActivity extends AppCompatActivity {
     private NumberPicker minutesPicker;
     private NumberPicker secondsPicker;
     private TextView countdownTextView;
+    private TextView textView2;
+    private TextView textView3;
     private RoundProgressBar countdownProgressBar;
     private Button startButton;
     private Button pauseButton;
     private Button resetButton;
 
     private long startTimeInMillis;
-
     private CountDownTimer countDownTimer;
     private boolean timerRunning;
-
     private long timeLeftInMillis;
     private int progress;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,25 +42,6 @@ public class MainActivity extends AppCompatActivity {
         TextView stopwatchView = findViewById(R.id.StopwatchView);
         TextView worldClockView = findViewById(R.id.worldClockView);
 
-        stopwatchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-                startActivity(intent);
-            }
-        });
-
-        worldClockView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, MainActivity3.class);
-                startActivity(intent);
-            }
-        });
-
-        timerView.setPaintFlags(timerView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG | Paint.FAKE_BOLD_TEXT_FLAG);
-
-
         hoursPicker = findViewById(R.id.hoursPicker);
         minutesPicker = findViewById(R.id.minutesPicker);
         secondsPicker = findViewById(R.id.secondsPicker);
@@ -77,14 +49,14 @@ public class MainActivity extends AppCompatActivity {
         countdownProgressBar = findViewById(R.id.countdownProgressBar);
         startButton = findViewById(R.id.startButton);
 
+        textView2 = findViewById(R.id.textView2);
+        textView3 = findViewById(R.id.textView3);
+
         pauseButton = findViewById(R.id.pauseButton);
         resetButton = findViewById(R.id.resetButton);
 
-        countdownProgressBar.setVisibility(View.INVISIBLE);
-        countdownTextView.setVisibility(View.INVISIBLE);
-
         hoursPicker.setMinValue(0);
-        hoursPicker.setMaxValue(24);
+        hoursPicker.setMaxValue(99);
 
         minutesPicker.setMinValue(0);
         minutesPicker.setMaxValue(60);
@@ -92,31 +64,30 @@ public class MainActivity extends AppCompatActivity {
         secondsPicker.setMinValue(0);
         secondsPicker.setMaxValue(60);
 
+        countdownProgressBar.setVisibility(View.INVISIBLE);
+        countdownTextView.setVisibility(View.INVISIBLE);
 
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startTimer();
-            }
+
+        stopwatchView.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+            startActivity(intent);
         });
 
-        pauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(timerRunning) {
-                    pauseTimer();
-                } else {
-                    resumeTimer();
-                }
-            }
+        worldClockView.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, MainActivity3.class);
+            startActivity(intent);
         });
 
-        resetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                resetTimer();
-            }
+        timerView.setPaintFlags(timerView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG | Paint.FAKE_BOLD_TEXT_FLAG);
+
+        startButton.setOnClickListener(v -> startTimer());
+
+        pauseButton.setOnClickListener(v -> {
+            if (timerRunning) pauseTimer();
+            else resumeTimer();
         });
+
+        resetButton.setOnClickListener(v -> resetTimer());
     }
 
     private void startTimer() {
@@ -127,15 +98,17 @@ public class MainActivity extends AppCompatActivity {
         timeLeftInMillis = ((long) hours * 60 * 60 + minutes * 60L + seconds) * 1000;
         startTimeInMillis = timeLeftInMillis;
 
-        if(timeLeftInMillis == 0) {
-            return;
-        }
+        if (timeLeftInMillis == 0) return;
 
         countdownProgressBar.setVisibility(View.VISIBLE);
         countdownTextView.setVisibility(View.VISIBLE);
         hoursPicker.setVisibility(View.INVISIBLE);
         minutesPicker.setVisibility(View.INVISIBLE);
         secondsPicker.setVisibility(View.INVISIBLE);
+        textView2.setVisibility(View.INVISIBLE);
+        textView3.setVisibility(View.INVISIBLE);
+
+
         pauseButton.setVisibility(View.VISIBLE);
         resetButton.setVisibility(View.VISIBLE);
 
@@ -148,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
                 updateCountDown();
             }
 
-            @SuppressLint("SetTextI18n")
             @Override
             public void onFinish() {
                 timerRunning = false;
@@ -161,14 +133,12 @@ public class MainActivity extends AppCompatActivity {
         startButton.setVisibility(View.INVISIBLE);
     }
 
-    @SuppressLint("SetTextI18n")
     private void pauseTimer() {
         countDownTimer.cancel();
         timerRunning = false;
         pauseButton.setText("Resume");
     }
 
-    @SuppressLint("SetTextI18n")
     private void resumeTimer() {
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
@@ -188,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
         pauseButton.setText("Pause");
     }
 
-    @SuppressLint("SetTextI18n")
     private void resetTimer() {
         timerRunning = false;
         countDownTimer.cancel();
@@ -198,6 +167,8 @@ public class MainActivity extends AppCompatActivity {
         hoursPicker.setVisibility(View.VISIBLE);
         minutesPicker.setVisibility(View.VISIBLE);
         secondsPicker.setVisibility(View.VISIBLE);
+        textView2.setVisibility(View.VISIBLE);
+        textView3.setVisibility(View.VISIBLE);
 
         startButton.setVisibility(View.VISIBLE);
         startButton.setText("Start");
@@ -207,12 +178,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateCountDown() {
-        int hours = (int) (timeLeftInMillis / 1000) / 3600;
-        int minutes = (int) (timeLeftInMillis / 1000) / 60;
+        int hours = (int) (timeLeftInMillis / (1000 * 60 * 60));
+        int minutes = (int) ((timeLeftInMillis / (1000 * 60)) % 60);
         int seconds = (int) (timeLeftInMillis / 1000) % 60;
         String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
         countdownTextView.setText(timeLeftFormatted);
     }
-
-
 }

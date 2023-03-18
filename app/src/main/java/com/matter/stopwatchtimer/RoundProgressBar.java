@@ -1,5 +1,6 @@
 package com.matter.stopwatchtimer;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,7 +11,7 @@ import android.view.View;
 
 public class RoundProgressBar extends View {
     private int progress = 0;
-    private int max = 100;
+    private final int max = 100;
     private final int strokeWidth = 10;
     private Paint backgroundPaint;
     private Paint progressPaint;
@@ -44,17 +45,9 @@ public class RoundProgressBar extends View {
         progressPaint.setStrokeWidth(strokeWidth);
     }
 
-    public void setMax(int max) {
-        this.max = max;
-    }
-
     public void setProgress(int progress) {
         this.progress = progress;
         invalidate();
-    }
-
-    public int getProgress(){
-        return progress;
     }
 
     @Override
@@ -68,7 +61,7 @@ public class RoundProgressBar extends View {
 
         canvas.drawCircle(width / 2, height / 2, radius, backgroundPaint);
 
-        RectF rectF = new RectF(width / 2 - radius, height / 2 - radius, width / 2 + radius, height / 2 + radius);
+        @SuppressLint("DrawAllocation") RectF rectF = new RectF(width / 2 - radius, height / 2 - radius, width / 2 + radius, height / 2 + radius);
         canvas.drawArc(rectF, -90, 360 * progress / max, false, progressPaint);
     }
 
@@ -76,4 +69,3 @@ public class RoundProgressBar extends View {
         return max;
     }
 }
-

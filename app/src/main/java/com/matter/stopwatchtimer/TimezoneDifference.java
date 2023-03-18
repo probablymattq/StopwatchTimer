@@ -14,8 +14,8 @@ public class TimezoneDifference {
         int offsetInHours = offsetInMillis / (60 * 60 * 1000);
 
         String identifier = "";
-        if(offsetInHours < 0) identifier = Math.abs(offsetInHours) + " hours behind";
-        else if(offsetInHours > 0) identifier = Math.abs(offsetInHours) + " hours ahead";
+        if (offsetInHours < 0) identifier = Math.abs(offsetInHours) + " hours behind";
+        else if (offsetInHours > 0) identifier = Math.abs(offsetInHours) + " hours ahead";
         else identifier = "same time zone";
 
         return identifier;
