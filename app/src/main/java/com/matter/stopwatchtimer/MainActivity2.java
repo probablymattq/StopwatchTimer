@@ -12,6 +12,7 @@ import android.widget.TextView;
 public class MainActivity2 extends AppCompatActivity {
     private TextView mMinutesDisplay;
     private TextView mSecondsDisplay;
+    private TextView mMiliSecondsDisplay;
     private Button mStartPauseButton;
 
     private CountDownTimer mCountDownTimer;
@@ -30,11 +31,9 @@ public class MainActivity2 extends AppCompatActivity {
 
         mMinutesDisplay = findViewById(R.id.minutes_display);
         mSecondsDisplay = findViewById(R.id.seconds_display);
+        mMiliSecondsDisplay = findViewById(R.id.mseconds_display);
         mStartPauseButton = findViewById(R.id.start_stop_button);
         Button mResetButton = findViewById(R.id.reset_button);
-
-        mMinutesDisplay.setText("00");
-        mSecondsDisplay.setText("00");
 
         timerTextView.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity2.this, MainActivity.class);
@@ -57,10 +56,10 @@ public class MainActivity2 extends AppCompatActivity {
     }
 
     private void startTimer() {
-        mCountDownTimer = new CountDownTimer(Long.MAX_VALUE, 1000) {
+        mCountDownTimer = new CountDownTimer(Long.MAX_VALUE, 1) {
             @Override
             public void onTick(long millisUntilFinished) {
-                mTimeElapsed += 1000;
+                mTimeElapsed += 10;
                 updateDisplay();
             }
 
@@ -92,8 +91,10 @@ public class MainActivity2 extends AppCompatActivity {
     private void updateDisplay() {
         int minutes = (int) (mTimeElapsed / 1000) / 60;
         int seconds = (int) (mTimeElapsed / 1000) % 60;
+        int mseconds = (int) (mTimeElapsed % 1000) / 10;
 
         mMinutesDisplay.setText(String.format("%02d", minutes));
         mSecondsDisplay.setText(String.format("%02d", seconds));
+        mMiliSecondsDisplay.setText(String.format("%02d", mseconds));
     }
 }
